@@ -51,6 +51,31 @@ public class MatrixMultiplier {
     }
 
     /**
+     * Elementwise matrix multiplication.
+     */
+    public Matrix hadamardProduct(Matrix matA, Matrix matB){
+        if((matA.getRows() != matB.getRows()) || (matA.getColumns() != matB.getColumns())){
+            throw new ArithmeticException("Matrices have incompatible dimensions!");
+        }
+
+        double[][] dataA = matA.getData();
+        double[][] dataB = matB.getData();
+
+        int n = matA.getRows();
+        int m = matA.getColumns();
+
+        double[][] dataC = new double[n][m];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                dataC[i][j] = dataA[i][j] * dataB[i][j];
+            }
+        }
+
+        Matrix matC = new Matrix(dataC);
+        return matC;
+    }
+
+    /**
      * Elementwise addition and subtraction operations.
      */
     public Matrix add(Matrix matA, Matrix matB){
@@ -118,6 +143,43 @@ public class MatrixMultiplier {
     }
 
     /**
+     * Flattens a matrix into 1-dimension.
+     */
+    public Matrix flatten(Matrix mat){
+        int rows = mat.getRows();
+        int columns = mat.getColumns();
+
+        double[][] data = mat.getData();
+
+        double[] flatData = new double[rows*columns];
+        double[][] vectorMatrixData = new double[1][flatData.length];
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                flatData[i*columns+j] = data[i][j];
+            }
+        }
+
+        vectorMatrixData[0] = flatData;
+
+        Matrix flatMatrix = new Matrix(vectorMatrixData);
+        return flatMatrix;
+    }
+
+    /**
+     * Converts a 1d array into a vector.
+     */
+    public Matrix fromVector(double[] vectorData){
+        double[][] vectorMatrix = new double[1][vectorData.length];
+        vectorMatrix[0] = vectorData;
+
+        Matrix mat = new Matrix(vectorMatrix);
+        Matrix transposed = transpose(mat);
+
+        return transposed;
+    }
+
+    /**
      * Random (Gaussian) matrix.
      */
     public Matrix randomMatrix(int rows, int columns){
@@ -149,6 +211,26 @@ public class MatrixMultiplier {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
                 dataC[i][j] = activationFunction.activate(data[i][j]);
+            }
+        }
+
+        Matrix matC = new Matrix(dataC);
+        return matC;
+    }
+
+    /**
+     * Applies an activation function derivative elementwise.
+     */
+    public Matrix activateDerivative(Matrix mat, ActivationFunction activationFunction){
+        int rows = mat.getRows();
+        int columns = mat.getColumns();
+
+        double[][] data = mat.getData();
+        double[][] dataC = new double[rows][columns];
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                dataC[i][j] = activationFunction.activate_derivative(data[i][j]);
             }
         }
 

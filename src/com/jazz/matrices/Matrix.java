@@ -34,6 +34,32 @@ public class Matrix {
         return columns;
     }
 
+    public void incrementItem(int i, int j, double increment){
+        this.data[i][j] += increment;
+    }
+
+    public void addInPlace(Matrix matB){
+        if((getRows() != matB.getRows()) || (getColumns() != matB.getColumns())){
+            throw new ArithmeticException("Matrices have incompatible dimensions!");
+        }
+
+        double[][] dataB = matB.getData();
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                this.data[i][j] += dataB[i][j];
+            }
+        }
+    }
+
+    public void multiplyInPlace(double scalar){
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                data[i][j] *= scalar;
+            }
+        }
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
